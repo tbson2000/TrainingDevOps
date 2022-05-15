@@ -1,15 +1,16 @@
 pipeline {
     agent any
     environment{
-        DOCKER_IMAGE = "tbson2000/nginx"
+        DOCKER_IMAGE = "tbson2000/nginx-${GIT_BRANCH.tokenize('/').pop()}"
     }
     stages {
-        stage('Build'){
+        stage("Build"){
             options {
                 timeout(time: 10, unit:'MINUTES')
             }
         }
         environment{
+            DOCKERHUB_CREDENTIALS = credentials('jenkins-github-training')
             DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
         }
         steps{
@@ -31,7 +32,7 @@ pipeline {
             sh "docker image rm ${DOCKER_IAMGE}:latest"
         }
     }
-    stage('Deploy'){
+    stage("Deploy"){
         options{
             timeout(time:10, unit:'MINUTES')
         }
