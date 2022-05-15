@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment{
-        DOCKER_IMAGE = "tbson2000/nginx-${GIT_BRANCH.tokenize('/').pop()}"
+        DOCKER_IMAGE = "tbson2000/nginx"
     }
     stages {
         stage("Build") {
