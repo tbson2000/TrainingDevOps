@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment{
-        DOCKER_IMAGE = "tbson2000/nginx"
+        DOCKER_IMAGE = "103245736/nginx"
     }
     stages {
         stage("Build") {
