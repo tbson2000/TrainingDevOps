@@ -1,10 +1,10 @@
 ---
 - hosts: web_app
   remote_user: ubuntu
-  become: True
+  become: yes
   tasks:
     - name: Login Dockerhub
-      shell: docker login -u "{{DOCKER_HUB_USERNAME}}" -p "{{DOCKER_HUB_PASSWORD}}"
+      shell: docker login -u "{{DOCKER_USERNAME}}" -p "{{DOCKER_PASSWORD}}"
     
     - name: Copy file
       copy:
