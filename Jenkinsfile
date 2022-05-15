@@ -18,7 +18,7 @@ pipeline {
                     docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
                     docker image ls | grep ${DOCKER_IMAGE}'''
                 withCredentials([usernamePassword(
-                    credentialsID:'docker-hub',
+                    credentialsId:'docker-hub',
                     usernameVariable:'DOCKER_USERNAME',
                     passwordVariable:'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
