@@ -9,7 +9,7 @@ pipeline {
                 timeout(time: 10, unit:'MINUTES')
             }
             environment {
-                    DOCKERHUB_CREDENTIALS = credentials('jenkins-github-training')
+                    DOCKERHUB_CREDENTIALS = credentials('docker-hub')
                     DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
                 }
             steps{
