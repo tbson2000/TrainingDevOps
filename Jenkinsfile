@@ -19,7 +19,7 @@ pipeline {
                     docker image ls | grep ${DOCKER_IMAGE}'''
                 withCredentials([usernamePassword(
                     credentialsID:'docker-hub',
-                    usernameVariable:'DOCKER_USERNAME',
+                    usernameVariable:'103245736',
                     passwordVariable:'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
                         sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
