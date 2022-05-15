@@ -38,7 +38,7 @@ pipeline {
             }
             steps{
                 withCredentials([usernamePassword(
-                    credentialsID:'docker-hub',
+                    credentialsId:'docker-hub',
                     usernameVariable:'DOCKER_USERNAME',
                     passwordVariable:'DOCKER_PASSWORD')]) {
                         ansiblePlaybook(
