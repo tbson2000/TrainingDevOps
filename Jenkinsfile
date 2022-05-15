@@ -4,62 +4,63 @@ pipeline {
         DOCKER_IMAGE = "tbson2000/nginx-${GIT_BRANCH.tokenize('/').pop()}"
     }
     stages {
-        stage("Build"){
+        stage("Build") {
             options {
                 timeout(time: 10, unit:'MINUTES')
             }
-        }
-        environment{
-            DOCKERHUB_CREDENTIALS = credentials('jenkins-github-training')
-            DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
-        }
-        steps{
-            sh '''
-               docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-               docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
-               docker image ls | grep ${DOCKER_IMAGE}'''
-            withCredentials([usernamePassword(
-                credentialsID:'docker-hub',
-                usernameVariable:'DOCKER_USERNAME',
-                passwordVariable:'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    sh "docker push ${DOCKER_IMAGE}:latest"
+            environment {
+                    DOCKERHUB_CREDENTIALS = credentials('jenkins-github-training')
+                    DOCKER_TAG="${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
                 }
+            steps{
+                sh '''
+                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                    docker image ls | grep ${DOCKER_IMAGE}'''
+                withCredentials([usernamePassword(
+                    credentialsID:'docker-hub',
+                    usernameVariable:'DOCKER_USERNAME',
+                    passwordVariable:'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
 
-            // clean to save disk
-            sh "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
-            sh "docker image rm ${DOCKER_IAMGE}:latest"
+                // clean to save disk
+                sh "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                sh "docker image rm ${DOCKER_IAMGE}:latest"
+            }
         }
-    }
-    stage("Deploy"){
-        options{
-            timeout(time:10, unit:'MINUTES')
+
+        stage("Deploy"){
+            options{
+                timeout(time:10, unit:'MINUTES')
+            }
+            steps{
+                withCredentials([usernamePassword(
+                    credentialsID:'docker-hub',
+                    usernameVariable:'DOCKER_USERNAME',
+                    passwordVariable:'DOCKER_PASSWORD')]) {
+                        ansiblePlaybook(
+                            credentialsID: 'private_key',
+                            playbook: 'playbook.yml',
+                            inventory: 'hosts',
+                            become: 'yes',
+                            extraVars:[
+                                DOCKER_USERNAME: "${DOCKER_USERNAME}",
+                                DOCKER_PASSWORD: "${DOCKER_PASSWORD}"
+                            ]
+                        )
+                    }
+            }
         }
-        steps{
-            withCredentials([usernamePassword(
-                credentialsID:'docker-hub',
-                usernameVariable:'DOCKER_USERNAME',
-                passwordVariable:'DOCKER_PASSWORD')]) {
-                    ansiblePlaybook(
-                        credentialsID: 'private_key',
-                        playbook: 'playbook.yml',
-                        inventory: 'hosts',
-                        become: 'yes',
-                        extraVars:[
-                            DOCKER_USERNAME: "${DOCKER_USERNAME}",
-                            DOCKER_PASSWORD: "${DOCKER_PASSWORD}"
-                        ]
-                    )
-                }
+        
+        post{
+            success{
+                echo "SUCCESSFULL"
+            }
+            failure{
+                echo "FAILED"
+            }
         }
-    }
-    post{
-        success{
-            echo "SUCCESSFULL"
-        }
-        failure{
-            echo "FAILED"
-        }
-    }
 }
