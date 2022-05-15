@@ -42,7 +42,7 @@ pipeline {
                     usernameVariable:'DOCKER_USERNAME',
                     passwordVariable:'DOCKER_PASSWORD')]) {
                         ansiblePlaybook(
-                            credentialsID: 'private_key',
+                            credentialsId: 'private_key',
                             playbook: 'playbook.yml',
                             inventory: 'hosts',
                             become: 'yes',
