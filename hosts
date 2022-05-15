@@ -1,3 +1,2 @@
 [web_app]
-172.16.2.247 ansible_user="ubuntu" ansible_python_interpreter='/usr/bin/env python3'
-ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+172.16.2.247 ansible_user="ubuntu" ansible_python_interpreter='/usr/bin/env python3' ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
