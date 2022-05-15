@@ -55,13 +55,13 @@ pipeline {
             }
         }
 
-        post{
-            success{
-                echo "SUCCESSFULL"
-            }
-            failure{
-                echo "FAILED"
-            }
-        }
+        // post{
+        //     success{
+        //         echo "SUCCESSFULL"
+        //     }
+        //     failure{
+        //         echo "FAILED"
+        //     }
+        // }
     }
 }
