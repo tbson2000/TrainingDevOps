@@ -8,7 +8,7 @@
     
     - name: Copy file
       copy:
-        src: docker-compose.yml
+        src: docker-compose.yaml
         dest: /home/ubuntu/
     
     - name: Restart docker-compose
